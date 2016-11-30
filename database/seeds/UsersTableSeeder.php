@@ -2,42 +2,32 @@
 
 use Illuminate\Database\Seeder;
 use \App\User;
-
+use Faker\Factory as Faker;
 class UsersTableSeeder extends Seeder
 {
-    public function run()
+  public function run()
+  {
+    $faker = Faker::create();
+    $gender = array('Male','Female');
+    foreach(range(0,25) as $x)
     {
       $user = new User;
-      $user->name = "Swornim Shrestha";
-      $user->email = "srestaswrnm@gmail.com";
+      $user->name = $faker->name;
+      $user->email = $faker->unique()->safeEmail;
       $user->password = bcrypt('secret');
-      $user->gender = "male";
+      $user->gender = $gender[rand(0,1)];
+      $user->image = $faker->imageUrl($height=500 ,$width=500);
       $user->profession = "Programmer";
-      $user->firm_name = "TinyBits IT Club";
-      $user->address = "Chautara Sindhuapclhowk";
-      $user->city = "Chautara";
-      $user->country = "Nepal";
-      $user->state = "CDR";
-      $user->website = "bravegurkha.github.io";
-      $user->lat = '60.331231212';
-      $user->long = '30.31345132';
+      $user->firm_name = $faker->company;
+      $user->address = $faker->streetAddress;
+      $user->city = $faker->city;
+      $user->country = $faker->country;
+      $user->state = $faker->state;
+      $user->website = $faker->url;
+      $user->phone = '9813'.rand(111111,999999);
+      $user->lat = $faker->latitude($min = -90, $max = 90);
+      $user->long = $faker->longitude($min = -180, $max = 180);
       $user->save();
-
-      $user = new User;
-      $user->name = "Pranish Shrestha";
-      $user->email = "srestarnm@gmail.com";
-      $user->password = bcrypt('secret');
-      $user->gender = "male";
-      $user->profession = "Programmer";
-      $user->firm_name = "TinyBits IT Club";
-      $user->address = "Chautara Sindhuapclhowk";
-      $user->city = "Chautara";
-      $user->country = "Nepal";
-      $user->state = "CDR";
-      $user->website = "bravegurkha.github.io";
-      $user->lat = '63.331231212';
-      $user->long = '31.31345132';
-      $user->save();
-
     }
+  }
 }
