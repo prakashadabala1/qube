@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use \App\Projects;
+use Intervention\Image\Image as Image;
+
 class ProjectController extends Controller
 {
   public function postProject(Request $request)
@@ -33,7 +35,8 @@ class ProjectController extends Controller
 
   if($requst->hasFile('image')){
     $file = $request->file('image');
-    $file->move('images/projects/'.$file_name.'.jpg');
+    $img = Image::make($file->getRealPath())->resize(400,400);
+    $mg->save()->save(url('/').'/public/projects/'.$filename.'.jpg');
   }
 
   $project= new Project();
