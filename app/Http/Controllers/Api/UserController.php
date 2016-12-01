@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use \App\User;
 use JWTAuth;
+
 class UserController extends Controller
 {
 
@@ -29,13 +30,6 @@ class UserController extends Controller
     }else{
       return response()->json(['User cannot be found'],500);
     }
-
-  }
-
-  public function getUsers()
-  {
-    $users = User::all();
-    return response()->json($users);
   }
 
   public function partialSignup(Request $request){
@@ -43,14 +37,10 @@ class UserController extends Controller
     array(
       'email' => $request->email,
       'password' => $request->password,
-      'lat' => $request->lat,
-      'long' => $request->long,
     ),
     array(
       'email' => 'required|email|unique:users,email',
       'password' => 'required|min:8',
-      'lat' => 'required|numeric',
-      'long' => 'required|numeric'
     ));
 
     if($validator->fails()){
@@ -60,55 +50,57 @@ class UserController extends Controller
     $user = new User;
     $user->email = $request->email;
     $user->password = bcrypt($request->password);
+    $user->name = '';
+    $user->gender = '';
+    $user->profession = '';
+    $user->firm_name = '';
+    $user->address = '';
+    $user->city = '';
+    $user->state = '';
+    $user->country = '';
+    $user->website = '';
+    $user->lat = '';
+    $user->long = '';
+    $user->verified = false;
     $user->save();
 
-    return response()->json(compat("Account Succesfully Created!"));
+    $user_data = User::where('email',$request->email)->first();
 
+    if(!empty($user_data)){
+
+      return response()->json($user_data);
+    }else{
+      return response()->json(['User cannot be found'],500);
+    }
   }
 
-  public function laterSignup(Request $request){
+  public function completeAccount($updateArray){
     $validator = \Validator::make(
+      $updateArray,
       array(
-        'name' => $request->name,
-        'gender' => $request->gender,
-        'profession' => $request->profession,
-        'firm_name' => $request->firm_name,
-        'address' => $request->addrss,
-        'city' => $request->city,
-        'country' => $request->country,
-        'state' => $request->state,
-        'website' =>  $request->website,
-      ),
-      array(
-        'name' => 'required|min:2',
-        'gender' => 'required',
-        'profession' => 'required|min:8',
-        'firm_name' => 'required',
-        'address' => 'required',
-        'city' => 'required',
-        'country' => 'required',
-        'state' => 'required',
-        'website' => 'required',
+        'id' => 'required|exists:users,id',
+        'name' => 'min:2',
+        'gender' => 'min:4',
+        'profession' => 'min:8',
+        'firm_name' => 'min:5',
+        'address' => 'min:10',
+        'city' => 'min:8',
+        'country' => 'min:3',
+        'state' => 'min:3',
+        'website' => 'min:5',
+        'lat' => 'numeric',
+        'long' => 'numeric'
       ));
-      $user = new User;
-      $user->name = $request->name;
-      $user->gender = $request->gender;
-      $user->profession = $request->profession;
-      $user->firm_name = $request->firm_name;
-      $user->address = $request->address;
-      $user->city = $request->city;
-      $user->state = $request->state;
-      $user->country = $request->country;
-      $user->website = $request->website;
-      $user->lat = $request->lat;
-      $user->long = $request->long;
-      $user->save();
 
-  if($validator->fails()){
-    return response()->json([$validator->messages()]);
+      if($validator->fails()){
+        return response()->json([$validator->messages()]);
+      }
+
+      User::where('id',$request->id)
+      ->update($updateArray);
+      return response()->json('updated',200);
   }
 
-  }
   public function getNearUsers(){
     $user = JWTAuth::parseToken()->authenticate();
     $lat_user = $user->lat;
