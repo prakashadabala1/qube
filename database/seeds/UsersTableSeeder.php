@@ -28,6 +28,7 @@ class UsersTableSeeder extends Seeder
       $user->phone = '9813'.rand(111111,999999);
       $user->lat = $faker->latitude($min = -90, $max = 90);
       $user->long = $faker->longitude($min = -180, $max = 180);
+      $user->verified = false;
       $user->save();
     }
   }

@@ -11,7 +11,6 @@ Route::group(['middleware' => 'jwt.auth'],function(){
   //Users ROutes
   Route::get('user/me','Api\AuthController@getAuthenticatedUser');
   Route::get('user','Api\UserController@getUser');
-  Route::get('users','Api\UserController@getUsers');
   Route::get('users/near','Api\UserController@getNearUsers');
 
   //Projects ROutes

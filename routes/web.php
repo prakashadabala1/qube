@@ -16,5 +16,11 @@ Route::get('/', function () {
 });
 
 Route::get('/home/fuck',function(){
-  return '<h1>This is home</h1>';
+  $fuck =  array(
+      'name' => 'Swornim',
+      'gender' => 'Male',
+      'profession' => 'This is fuck',
+      'id' => 234,
+    );
+  return $fuck['name'];
 });
