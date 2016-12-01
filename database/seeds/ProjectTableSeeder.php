@@ -38,7 +38,7 @@ class ProjectTableSeeder extends Seeder
     'title' => $faker->firstName,
     'category_id' => $x,
     'type_id' => $x,
-    'description' => $faker->paragraph,
+    'description' => $faker->sentence,
     'image' => $faker->imageUrl($width=200,$height=200)
   ));
 }
