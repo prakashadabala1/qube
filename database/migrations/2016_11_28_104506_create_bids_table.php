@@ -17,7 +17,7 @@ class CreateBidsTable extends Migration
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->integer('project_id')->unsigned();
-            $table->string('description');
+            $table->longText('description');
             $table->integer('price');
             $table->timestamps();
 

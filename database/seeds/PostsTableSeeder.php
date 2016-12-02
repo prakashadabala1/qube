@@ -15,7 +15,7 @@ class PostsTableSeeder extends Seeder
         Posts::create(array(
           'user_id' => rand(1,24),
           'title' => $faker->name,
-          'description' => $faker->sentence,
+          'description' => $faker->paragraph,
         ));
       }
     }

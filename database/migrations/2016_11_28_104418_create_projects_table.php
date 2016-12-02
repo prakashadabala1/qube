@@ -19,7 +19,7 @@ class CreateProjectsTable extends Migration
             $table->string('title');
             $table->integer('category_id')->unsigned();
             $table->integer('type_id')->unsigned();
-            $table->string('description');
+            $table->longText('description');
             $table->string('location');
             $table->string('image')->unique();
             $table->timestamps();
