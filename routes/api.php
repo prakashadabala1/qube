@@ -29,4 +29,9 @@ Route::group(['middleware' => 'jwt.auth'],function(){
   Route::post('post/do','PostController@post');
   Route::get('comments','CommentController@getComments');
   Route::post('comment','CommentController@comment');
+
+  //Chat ROutes
+
+  Route::get('message/get','MessageController@get');
+  Route::post('message/send','MessageController@send');
 });
