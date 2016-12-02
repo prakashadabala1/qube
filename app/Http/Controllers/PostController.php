@@ -9,7 +9,7 @@ class PostController extends Controller
   {
     $validator = \Validator::make(
     array(
-      'user_id' => $request->id,
+      'user_id' => $request->user_id,
       'title' => $request->title,
       'description' => $request->description,
     ),

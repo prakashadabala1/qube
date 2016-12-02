@@ -16,12 +16,14 @@ Route::group(['middleware' => 'jwt.auth'],function(){
 
   //Projects ROutes
   Route::post('project/add','ProjectController@postProject');
-  Route::post('projects','ProjectController@postProjects');
-  Route::post('project','ProjectController@postProject');
+  Route::post('projects','ProjectController@getProjects');
+  Route::post('project','ProjectController@getProject');
 
   //Blog Posts
 
   Route::get('posts','PostController@getPosts');
   Route::get('post','PostController@getPost');
   Route::post('post/do','PostController@post');
+  Route::get('comments','CommentController@getComments');
+  Route::post('comment','CommentController@comment');
 });

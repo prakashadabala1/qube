@@ -12,7 +12,7 @@ class ProjectController extends Controller
   {
     $validator = \Validator::make(
     array(
-      'user_id' => $request->id,
+      'user_id' => $request->user_id,
       'title' => $request->title,
       'cat_id' => $request->cat_id,
       'type_id' => $request->type_id,
