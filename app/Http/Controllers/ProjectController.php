@@ -29,7 +29,7 @@ class ProjectController extends Controller
   );
 
   if($validator->fails()){
-    return response()->json($validator->message());
+    return response()->json($validator->messages());
   }
   $file_name = rand(10000,1000000000).timestamp();
 
