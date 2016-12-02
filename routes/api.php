@@ -3,18 +3,19 @@
 use Illuminate\Http\Request;
 // API Routes
 
-Route::get('auth','Api\AuthController@authenticate');
-Route::get('signup','Api\UserController@partialSignup');
-Route::get('reset','Api\UserController@reset');
+Route::post('auth','Api\AuthController@authenticate');
+Route::post('signup','Api\UserController@partialSignup');
+Route::post('reset','Api\UserController@reset');
 
 Route::group(['middleware' => 'jwt.auth'],function(){
   //Users ROutes
-  Route::get('user/me','Api\AuthController@getAuthenticatedUser');
-  Route::get('user','Api\UserController@getUser');
-  Route::get('users/near','Api\UserController@getNearUsers');
+  Route::post('user/me','Api\AuthController@postAuthenticatedUser');
+  Route::post('user','Api\UserController@postUser');
+  Route::post('users/near','Api\UserController@postNearUsers');
 
   //Projects ROutes
-  Route::get('projects','ProjectController@getProjects');
-  Route::get('project','ProjectController@getProject');
-
+  Route::post('project/add','ProjectController@postProject');
+  Route::post('projects','ProjectController@postProjects');
+  Route::post('project','ProjectController@postProject');
+  
 });
