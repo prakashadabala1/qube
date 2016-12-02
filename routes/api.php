@@ -9,9 +9,10 @@ Route::post('reset','Api\UserController@reset');
 
 Route::group(['middleware' => 'jwt.auth'],function(){
   //Users ROutes
-  Route::post('user/me','Api\AuthController@postAuthenticatedUser');
-  Route::post('user','Api\UserController@postUser');
-  Route::post('users/near','Api\UserController@postNearUsers');
+  Route::get('user/me','Api\AuthController@getAuthenticatedUser');
+  Route::get('user','Api\UserController@getUser');
+  Route::get('users/near','Api\UserController@getNearUsers');
+  Route::post('user/update','Api\UserController@completeAccount');
 
   //Projects ROutes
   Route::post('project/add','ProjectController@postProject');
