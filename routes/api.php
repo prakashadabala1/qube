@@ -18,9 +18,12 @@ Route::group(['middleware' => 'jwt.auth'],function(){
   Route::post('project/add','ProjectController@postProject');
   Route::post('projects','ProjectController@getProjects');
   Route::post('project','ProjectController@getProject');
+  Route::get('bids/user','BidController@getBidsByUser');
+  Route::get('bids/project','BidController@getBidsByProject');
+  Route::get('bid','BidController@getBid');
+  Route::post('bid','BidController@bid');
 
   //Blog Posts
-
   Route::get('posts','PostController@getPosts');
   Route::get('post','PostController@getPost');
   Route::post('post/do','PostController@post');
