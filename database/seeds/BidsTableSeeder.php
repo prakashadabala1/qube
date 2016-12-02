@@ -16,7 +16,7 @@ class BidsTableSeeder extends Seeder
         array(
             'user_id' => rand(1,24),
             'project_id' => rand(1,24),
-            'description' => $faker->sentence,
+            'description' => $faker->paragraph,
             'price' => rand(20000,20000),
         ));
       }
