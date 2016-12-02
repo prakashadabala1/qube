@@ -111,9 +111,14 @@ class UserController extends Controller
     $users_near = array();
     foreach($users as $u){
 
-        if(($near_lats[0] < $u->lat || $near_lats[1] > $u->lat) && ($near_longs[0] < $u->long || $near_longs[1] > $u->long))
+        if($near_lats[0] < $u->lat && $near_lats[1] > $u->lat)
         {
+          if($near_longs[0] < $u->long && $near_longs[1] > $u->long)
+          {
+
           array_push($users_near,$u);
+
+          }
         }
     }
     return response()->json($users_near);

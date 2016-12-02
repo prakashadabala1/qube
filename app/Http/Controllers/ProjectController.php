@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use \App\Projects;
-use Intervention\Image\Image as Image;
+use Intervention\Image\Facades\Image as Image;
+use Carbon\Carbon;
 
 class ProjectController extends Controller
 {
@@ -17,6 +18,7 @@ class ProjectController extends Controller
       'type_id' => $request->type_id,
       'description' => $request->description,
       'image' => $request->image,
+      'location' => $request->location,
     ),
     array(
       'user_id' => 'required|exists:users,id',
@@ -24,29 +26,32 @@ class ProjectController extends Controller
       'cat_id' => 'required|exists:categories,id',
       'type_id' => 'required|exists:types,id',
       'description' => 'required|min:16',
+      'location' => 'required|min:2',
       'image' => 'required|image',
     )
   );
 
   if($validator->fails()){
-    return response()->json($validator->message());
+    return response()->json($validator->messages());
   }
-  $file_name = rand(10000,1000000000).timestamp();
+  $file_name = rand(10000,1000000000).Carbon::now()->toDayDateTimeString();
 
-  if($requst->hasFile('image')){
+  if($request->hasFile('image')){
     $file = $request->file('image');
     $img = Image::make($file->getRealPath())->resize(400,400);
-    $mg->save()->save(url('/').'/public/projects/'.$filename.'.jpg');
+    $img->save()->save(public_path('images/projects/'.$file_name.'.jpg'));
   }
 
-  $project= new Project();
+  $project= new Projects();
   $project->user_id = $request->id;
   $project->title = $request->title;
-  $project->cat_i = $request->cat_id;
+  $project->category_id = $request->cat_id;
   $project->type_id = $request->type_id;
   $project->description = $request->description;
   $project->image = 'images/projects/'.$file_name.'.jpg';
-
+  $project->location = $request->location;
+  $project->save();
+  return response()->json("project saved");
 }
 
   public function getProjects(Request $request)
