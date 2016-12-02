@@ -38,5 +38,5 @@ Route::group(['middleware' => 'jwt.auth'],function(){
   //Qubes Routes
 
   Route::get('qubes','QubeController@getQubes');
-  Route::get('qube','QubeController@makeQubes');
+  Route::post('qube','QubeController@makeQubes');
 });

@@ -41,7 +41,7 @@ class QubeController extends Controller
       $qube->user_id = $request->user_id;
       $qube->image = 'images/qubes/'.$file_name.'.jpg';
       $qube->title = $request->title;
-      $project->save();
+      $qube->save();
 
       return response()->json("qube saved",200);
     }
