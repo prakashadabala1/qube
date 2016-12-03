@@ -5,6 +5,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use \App\User;
 use JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Intervention\Image\Facades\Image as Image;
+use Carbon\Carbon;
 
 class UserController extends Controller
 {
@@ -32,7 +35,8 @@ class UserController extends Controller
     }
   }
 
-  public function partialSignup(Request $request){
+  public function partialSignup(Request $request)
+  {
     $validator = \Validator::make(
     array(
       'email' => $request->email,
@@ -50,54 +54,82 @@ class UserController extends Controller
     $user = new User;
     $user->email = $request->email;
     $user->password = bcrypt($request->password);
-    $user->name = '';
-    $user->gender = '';
-    $user->profession = '';
-    $user->firm_name = '';
-    $user->address = '';
-    $user->city = '';
-    $user->state = '';
-    $user->country = '';
-    $user->website = '';
-    $user->lat = '';
-    $user->long = '';
     $user->verified = false;
     $user->save();
 
-    $user_data = User::where('email',$request->email)->first();
-
-    if(!empty($user_data)){
-
-      return response()->json($user_data);
-    }else{
-      return response()->json(['User cannot be found'],500);
-    }
-  }
-
-  public function completeAccount($updateArray){
-    $validator = \Validator::make(
-      $updateArray,
-      array(
-        'id' => 'required|exists:users,id',
-        'name' => 'min:2',
-        'gender' => 'min:4',
-        'profession' => 'min:8',
-        'firm_name' => 'min:5',
-        'address' => 'min:10',
-        'city' => 'min:8',
-        'country' => 'min:3',
-        'state' => 'min:3',
-        'website' => 'min:5',
-        'lat' => 'numeric',
-        'long' => 'numeric'
-      ));
-
-      if($validator->fails()){
-        return response()->json([$validator->messages()]);
+      try {
+          if (!$token = JWTAuth::attempt($request->only('email','password'))) {
+              return response()->json(['error' => 'invalid_credentials'], 401);
+          }
+      } catch (JWTException $e) {
+          return response()->json(['error' => 'could_not_create_token'], 500);
       }
 
-      User::where('id',$request->id)
+      return response()->json(compact('token'));
+
+    }
+
+
+  public function completeAccount(Request $request)
+  {
+      $id = JWTAuth::parseToken()->authenticate()->id;
+
+      $updateArray = array();
+
+      if($request->has('name'))
+      {
+        $updateArray['name'] = $request->name;
+      }
+      if($request->has('gender'))
+      {
+        $updateArray['gender'] = $request->gender;
+      }
+      if($request->has('gender'))
+      {
+        $updateArray['profession'] = $request->profession;
+      }
+      if($request->has('firm_name'))
+      {
+        $updateArray['firm_name'] = $request->firm_name;
+      }
+      if($request->has('addrss'))
+      {
+        $updateArray['address'] = $request->address;
+      }
+      if($request->has('city'))
+      {
+        $updateArray['city'] = $request->city;
+      }
+      if($request->has('country'))
+      {
+        $updateArray['country'] = $request->country;
+      }
+      if($request->has('state'))
+      {
+        $updateArray['state'] = $request->state;
+      }
+      if($request->has('website'))
+      {
+        $updateArray['website'] = $request->website;
+      }
+      if($request->has('lat'))
+      {
+        $updateArray['lat'] = $request->lat;
+      }
+      if($request->has('long'))
+      {
+        $updateArray['long'] = $request->long;
+      }
+      if($request->hasFile('image')){
+        $file = $request->file('image');
+        $img = Image::make($file->getRealPath())->resize(500,500);
+        $img->save()->save(public_path('images/users/'.$file_name.'.jpg'));
+        $updateArray['image'] = 'images/users/'.$file_name.'.jpg';
+      }
+
+      User::where('id',$id)
       ->update($updateArray);
+
       return response()->json('updated',200);
   }
 
