@@ -12,7 +12,7 @@ Route::group(['middleware' => 'jwt.auth'],function(){
   Route::get('user/me','Api\AuthController@getAuthenticatedUser');
   Route::get('user','Api\UserController@getUser');
   Route::get('users/near','Api\UserController@getNearUsers');
-  Route::post('user/update','Api\UserController@completeAccount');
+  Route::post('user/update/','Api\UserController@completeAccount');
 
   //Projects ROutes
   Route::post('project/add','ProjectController@postProject');
