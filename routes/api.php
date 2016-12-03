@@ -40,4 +40,10 @@ Route::group(['middleware' => 'jwt.auth'],function(){
 
   Route::get('qubes','QubeController@getQubes');
   Route::post('qube','QubeController@makeQubes');
+
+  //Portfolio Routes
+
+  Route::get('portfolios','PortfolioController@getByUser');
+  Route::get('portfolio','PortfolioController@getById');
+  Route::post('portfolio/add','PortfolioController@add');
 });
