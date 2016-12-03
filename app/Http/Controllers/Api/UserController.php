@@ -8,6 +8,8 @@ use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Intervention\Image\Facades\Image as Image;
 use Carbon\Carbon;
+use Mail;
+
 
 class UserController extends Controller
 {
@@ -125,6 +127,7 @@ class UserController extends Controller
         $updateArray['long'] = $request->long;
       }
       if($request->hasFile('image')){
+        $file_name = rand(10000,1000000000).Carbon::now()->toDayDateTimeString();
         $file = $request->file('image');
         $img = Image::make($file->getRealPath())->resize(500,500);
         $img->save()->save(public_path('images/users/'.$file_name.'.jpg'));
@@ -175,7 +178,64 @@ class UserController extends Controller
     {
       return response()->json([$validator->messages()]);
     }
+    $token = rand(100000,9999999);
+    \DB::table('password_resets')->insert(array(
+      'email' => $request->email,
+      'token' => $token,
+      'created_at' => Carbon::now(),
+    ));
+    try{
 
+    mail(
+    $to = $request->email,
+    $message = $token,
+    $subject = "Password Reset"
+  );
     return response()->json(['email has been sent']);
+  }catch(Expection $e)
+  {
+    return response()->json(['problem sending token']);
   }
+  }
+
+  public function resetConfirm(Request $request)
+  {
+    $validator = \Validator::make(
+    array(
+      'email' => $request->email,
+      'password' => $request->password,
+      'code' => $request->code,
+    ),
+    array(
+      'email' => 'required|email|exists:users,email',
+      'password' => 'required|min:8',
+      'code' => 'required|min:6',
+    ));
+
+    if($validator->fails()){
+      return response()->json([$validator->messages()]);
+    }
+
+    $reset_details = \DB::table('password_resets')->where('email',$request->email)->orderBy('created_at','desc')->first();
+
+    if(!empty($reset_details) && $reset_details->token== $request->code)
+    {
+      User::where('email',$request->email)->update(array(
+          'password' => bcrypt($request->password),
+      ));
+
+      try {
+          if (!$token = JWTAuth::attempt($request->only('email','password'))) {
+              return response()->json(['error' => 'invalid_credentials'], 401);
+          }
+      } catch (JWTException $e) {
+          return response()->json(['error' => 'could_not_create_token'], 500);
+      }
+      \DB::table('password_resets')->where('email',$request->email)->orderBy('created_at','desc')->delete();
+      return response()->json(compact('token'));
+
+    }
+    return response()->json(["invalid data provided"]);
+    }
+
 }
