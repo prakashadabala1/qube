@@ -80,6 +80,10 @@ class UserController extends Controller
       {
         $updateArray['name'] = $request->name;
       }
+      if($request->has('password'))
+      {
+        $updateArray['password'] = $request->password;
+      }
       if($request->has('gender'))
       {
         $updateArray['gender'] = $request->gender;
