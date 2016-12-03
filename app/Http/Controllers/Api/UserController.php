@@ -127,11 +127,13 @@ class UserController extends Controller
         $updateArray['long'] = $request->long;
       }
       if($request->hasFile('image')){
-        $file_name = rand(10000,1000000000).Carbon::now()->toDayDateTimeString();
+        $file_name = rand(10000,1000000000).'_'.time();
+        $path = public_path('images/users/'.$file_name.'.jpg');
+        $url = url('images/users/'.$file_name.'.jpg');
         $file = $request->file('image');
         $img = Image::make($file->getRealPath())->resize(500,500);
-        $img->save()->save(public_path('images/users/'.$file_name.'.jpg'));
-        $updateArray['image'] = 'images/users/'.$file_name.'.jpg';
+        $img->save($path);
+        $updateArray['image'] = $url;
       }
 
       User::where('id',$id)

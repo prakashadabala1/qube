@@ -29,12 +29,13 @@ class QubeController extends Controller
           return $validator->messages();
       }
 
-      $file_name = rand(10000,1000000000).Carbon::now()->toDayDateTimeString();
-
+      $file_name = rand(10000,1000000000).'_'.time();
+      $path =public_path('images/qubes/'.$file_name.'.jpg');
+      $url = url('images/qubes/'.$file_name.'.jpg')
       if($request->hasFile('image')){
         $file = $request->file('image');
         $img = Image::make($file->getRealPath())->resize(400,400);
-        $img->save()->save(public_path('images/qubes/'.$file_name.'.jpg'));
+        $img->save($url);
       }
 
       $qube = new Qube();

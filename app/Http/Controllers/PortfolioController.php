@@ -26,7 +26,7 @@ class PortfolioController extends Controller
   if($validator->fails()){
     return response()->json($validator->messages());
   }
-  $file_name = rand(10000,1000000000).time();
+  $file_name = rand(10000,1000000000).'_'.time();
   $path = public_path('images/portfolios/'.$file_name.'.jpg');
   $url = url('images/portfolios/'.$file_name.'.jpg');
   if($request->hasFile('image')){
