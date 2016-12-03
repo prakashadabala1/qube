@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 Route::post('auth','Api\AuthController@authenticate');
 Route::post('signup','Api\UserController@partialSignup');
 Route::post('reset','Api\UserController@reset');
+Route::post('reset/confirm','Api\UserController@resetConfirm');
 
 Route::group(['middleware' => 'jwt.auth'],function(){
   //Users ROutes
