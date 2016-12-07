@@ -30,6 +30,7 @@ class CreateUsersTable extends Migration
             $table->string('phone')->nullable();
             $table->float('lat')->nullable();
             $table->float('long')->nullable();
+            $table->integer('rating')->nullable();
             $table->boolean('verified');
             $table->rememberToken();
             $table->timestamps();

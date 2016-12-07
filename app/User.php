@@ -26,4 +26,18 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function followers()
+    {
+        $followers = \DB::table('follows')->where('follower',$this->id)->count();
+
+        return $followers;
+    }
+
+    public function following()
+    {
+        $followers = \DB::table('follows')->where('followed',$this->id)->count();
+
+        return $followers;
+    }
 }

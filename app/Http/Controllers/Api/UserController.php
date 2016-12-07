@@ -8,8 +8,7 @@ use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Intervention\Image\Facades\Image as Image;
 use Carbon\Carbon;
-use Mail;
-
+use \App\UserReviews;
 
 class UserController extends Controller
 {
@@ -33,7 +32,7 @@ class UserController extends Controller
 
       return response()->json($user_data);
     }else{
-      return response()->json(['User cannot be found'],500);
+      return response()->json(['User cannot be found'],204);
     }
   }
 
@@ -193,10 +192,10 @@ class UserController extends Controller
     $message = $token,
     $subject = "Password Reset"
   );
-    return response()->json(['email has been sent']);
+    return response()->json(['email has been sent'],200);
   }catch(Expection $e)
   {
-    return response()->json(['problem sending token']);
+    return response()->json(['problem sending token',501]);
   }
   }
 
@@ -237,7 +236,113 @@ class UserController extends Controller
       return response()->json(compact('token'));
 
     }
-    return response()->json(["invalid data provided"]);
+    return response()->json(["invalid data provided"],204);
     }
 
+    public function follow(Request $request)
+    {
+        $validator = \Validator::make(
+        array(
+          'id' => $request->id,
+         ),
+        array(
+          'id' => 'required|exists:users,id',
+        ));
+
+        if($validator->fails()){
+          return response()->json([$validator->messages()]);
+        }
+        $my_id = JWTAuth::authenticate()->id;
+
+        \DB::table('follows')->insert(array(
+            'follower' => $my_id,
+            'followed' => $request->id,
+        ));
+    return response()->json("followed",200);
+    }
+
+    public function followers(Request $request)
+    {
+        $validator = \Validator::make(
+        array(
+          'id' => $request->id,
+         ),
+        array(
+          'id' => 'required|exists:users,id',
+        ));
+
+        if($validator->fails()){
+          return response()->json([$validator->messages()]);
+        }
+
+        $followers =User::where('id',$request->id)->first()->followers();
+        return response()->json($followers,200);
+    }
+
+    public function followed(Request $request)
+    {
+        $validator = \Validator::make(
+        array(
+          'id' => $request->id,
+         ),
+        array(
+          'id' => 'required|exists:users,id',
+        ));
+
+        if($validator->fails()){
+          return response()->json([$validator->messages()]);
+        }
+
+        $followed =User::where('id',$request->id)->first()->followed();
+        return response()->json($followed,200);
+    }
+
+    public function review(Request $request)
+    {
+        $validator = \Validator::make(
+        array(
+          'user_id' => $request->user_id,
+          'reviewer_id' => $requst->reviewer_id,
+          'rating' => $requst->rating,
+          'review' => $request->review,
+         ),
+        array(
+          'user_id' => 'required|exists:users,id',
+          'reviewer_id' => 'required|exists:users,id',
+          'rating' => 'required|numeric',
+          'review' => 'required',
+        ));
+
+        if($validator->fails()){
+          return response()->json([$validator->messages()]);
+        }
+
+        $ur = new UserReviews();
+        $ur->user_id = $request->user_id;
+        $ur->reviewer_id = $request->reviewer_id;
+        $ur->rating = $request->rating;
+        $ur->review = $request->review;
+        $ur->save();
+
+        return response()->json('review done',200);
+    }
+
+    public function getReviews(Request $request)
+    {
+        $validator = \Validator::make(
+        array(
+          'id' => $request->id,
+         ),
+        array(
+          'id' => 'required|exists:users,id',
+        ));
+
+        if($validator->fails()){
+          return response()->json([$validator->messages()]);
+        }
+
+        $user_reviews = UserReviews::where('user_id',$request->id)->all();
+
+        return response()->json($user_reviews,200);
+    }
 }
