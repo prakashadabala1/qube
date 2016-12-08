@@ -32,7 +32,7 @@ class ProjectController extends Controller
   );
 
   if($validator->fails()){
-    return response()->json($validator->messages());
+      return response()->json(['success' => false, 'error' => $validator->messages(), 'error_code' => 400]);
   }
   $file_name = rand(10000,1000000000).'_'.time();
   $path = public_path('images/projects/'.$file_name.'.jpg');
@@ -52,26 +52,55 @@ class ProjectController extends Controller
   $project->image = $url;
   $project->location = $request->location;
   $project->save();
-  return response()->json("project saved");
+
+  return response()->json(['success' => true, 'data' => "project saved", 'status' => 200]);
+
 }
 
   public function getProjects(Request $request)
   {
+      $validator = \Validator::make(
+      array(
+        'user_id' => $request->user_id,
+      ),
+      array(
+        'user_id' => 'required|exists:users,id',
+      )
+    );
+
+    if($validator->fails()){
+        return response()->json(['success' => false, 'error' => $validator->messages(), 'error_code' => 400]);
+    }
+
     $projects =  Projects::where('user_id',$request->user_id)->get();
 
     if(empty($projects)){
-      return response()->json(['projects not found'],404);
+        return response()->json(['success' => false, 'error' => "no projects", 'error_code' => 400]);
     }
-    return response()->json($projects);
+    return response()->json(['success' => true, 'data' => $projects, 'status' => 200]);
+
   }
 
   public function getProject(Request $request)
   {
+      $validator = \Validator::make(
+      array(
+        'id' => $request->id,
+      ),
+      array(
+        'id' => 'required|exists:projects,id',
+      )
+    );
+
+    if($validator->fails()){
+        return response()->json(['success' => false, 'error' => $validator->messages(), 'error_code' => 400]);
+    }
     $project = Projects::where('id',$request->id)->first();
+
     if(empty($project)){
-      return response()->json(['project not found'],404);
+        return response()->json(['success' => false, 'error' => "project not found", 'error_code' => 400]);
     }
 
-    return response()->json($project);
+    return response()->json(['success' => true, 'data' => $project, 'status' => 200]);
   }
 }

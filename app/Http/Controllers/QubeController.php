@@ -27,7 +27,7 @@ class QubeController extends Controller
 
         if($validator->fails())
         {
-            return $validator->messages();
+            return response()->json(['success' => false, 'error' => $validator->messages(), 'error_code' => 400]);
         }
 
         $file_name = rand(10000,1000000000).'_'.time();
@@ -45,7 +45,7 @@ class QubeController extends Controller
         $qube->title = $request->title;
         $qube->save();
 
-        return response()->json(["qube saved",200]);
+        return response()->json(['success' => true, 'data' => "qube saved", 'status' => 200]);
     }
 
     public function getQubes(Request $request)
@@ -60,11 +60,11 @@ class QubeController extends Controller
 
         if($validator->fails())
         {
-            return $validator->messages();
+            return response()->json(['success' => false, 'error' => $validator->messages(), 'error_code' => 400]);
         }
 
         $qubes = Qube::where('user_id',$request->user_id)->get();
-        return response()->json([$qubes,200]);
+        return response()->json(['success' => true, 'data' => $qubes, 'status' => 200]);
     }
 
     public function like(Request $request)
@@ -81,7 +81,7 @@ class QubeController extends Controller
         );
 
         if($validator->fails()){
-            return response()->json($validator->messages());
+            return response()->json(['success' => false, 'error' => $validator->messages(), 'error_code' => 400]);
         }
 
         $post_likes = new PostLikes();
@@ -89,7 +89,7 @@ class QubeController extends Controller
         $post_likes->qube_id = $request->qube_id;
         $post_likes->save();
 
-        return response()->json(["liked",200]);
+        return response()->json(['success' => true, 'data' => "liked", 'status' => 200]);
     }
 
     public function getLikes(Request $request)
@@ -104,9 +104,9 @@ class QubeController extends Controller
         );
 
         if($validator->fails()){
-            return response()->json($validator->messages());
+            return response()->json(['success' => false, 'error' => $validator->messages(), 'error_code' => 400]);
         }
         $likes = QubeLikes::where('qube_id',$request->qube_id)->count();
-        return response()->json([$likes,200]);
+        return response()->json(['success' => true, 'data' => $likes, 'status' => 200]);
     }
 }

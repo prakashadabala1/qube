@@ -20,13 +20,17 @@ class MessageController extends Controller
         'message' => 'required',
       ));
 
+      if($validator->fails()){
+          return response()->json(['success' => false, 'error' => $validator->messages(), 'error_code' => 400]);
+      }
+      
       $message = new Messages();
       $message->from = $request->from;
       $message->to = $request->to;
       $message->message = $request->message;
       $message->save();
 
-      return response()->json("message sent",200);
+      return response()->json(['success' => true, 'data' => "message_sent", 'status' => 200]);
   }
 
   public function get(Request $request)
@@ -41,7 +45,11 @@ class MessageController extends Controller
       'to' => 'required|exists:users,id',
     ));
 
+    if($validator->fails()){
+        return response()->json(['success' => false, 'error' => $validator->messages(), 'error_code' => 400]);
+    }
+
     $messages = Messages::where('from',$request->from)->where('to',$request->to)->get();
-    return response()->json($messages,200);
+    return response()->json(['success' => true, 'data' => $messages, 'status' => 200]);
   }
 }
