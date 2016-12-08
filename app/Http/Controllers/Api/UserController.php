@@ -131,8 +131,7 @@ class UserController extends Controller
             $updateArray['image'] = $url;
         }
 
-        User::where('id', $id)
-            ->update($updateArray);
+        User::where('id', $id)->update($updateArray);
 
         return response()->json(['success' => true, 'data' => 'updated', 'status' => 200]);
     }
