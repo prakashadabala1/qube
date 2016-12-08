@@ -22,7 +22,7 @@ class CommentController extends Controller
   );
 
   if($validator->fails()){
-    return response()->json($validator->messages());
+      return response()->json(['success' => false, 'error' => $validator->messages(), 'error_code' => 400]);
   }
 
   $comment = new Comments();
@@ -31,13 +31,26 @@ class CommentController extends Controller
   $comment->comment = $request->comment;
   $comment->save();
 
-  return response()->json("commented",200);
+  return response()->json(['success' => true, 'data' => "commented", 'status' => 200]);
   }
 
   public function getComments(Request $request)
   {
+      $validator = \Validator::make(
+      array(
+        'post_id' => $request->post_id,
+      ),
+      array(
+        'post_id' => 'required|exists:posts,id',
+        )
+    );
+
+    if($validator->fails()){
+        return response()->json(['success' => false, 'error' => $validator->messages(), 'error_code' => 400]);
+    }
+
     $comments = Comments::where('post_id',$request->post_id)->get();
 
-    return response()->json($comments);
+    return response()->json(['success' => true, 'data' => $comments, 'status' => 200]);
   }
 }

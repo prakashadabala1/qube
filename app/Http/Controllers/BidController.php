@@ -24,7 +24,7 @@ class BidController extends Controller
 
     if($validator->fails())
     {
-      return response()->json($validator->messages());
+        return response()->json(['success' => false, 'error' => $validator->messages(), 'error_code' => 400]);
     }
 
     $bid = new Bids();
@@ -34,24 +34,65 @@ class BidController extends Controller
     $bid->price = $request->price;
     $bid->save();
 
-    return response()->json("bid registered" ,200);
+    return response()->json(['success' => true, 'data' => "bid registered", 'status' => 200]);
   }
 
   public function getBidsByProject(Request $request)
   {
+      $validator = \Validator::make(
+      array(
+        'project_id' => $request->project_id,
+      ),
+      array(
+        'project_id' => 'required|exists:projects,id',
+     ));
+
+      if($validator->fails())
+      {
+          return response()->json(['success' => false, 'error' => $validator->messages(), 'error_code' => 400]);
+      }
+
     $bids = Bids::where('project_id',$request->project_id)->get();
-    return response()->json($bids);
+    return response()->json(['success' => true, 'data' => $bids, 'status' => 200]);
   }
 
   public function getBidsByUser(Request $request)
   {
+      $validator = \Validator::make(
+      array(
+        'user_id' => $request->user_id,
+      ),
+      array(
+        'user_id' => 'required|exists:users,id',
+     ));
+
+      if($validator->fails())
+      {
+          return response()->json(['success' => false, 'error' => $validator->messages(), 'error_code' => 400]);
+      }
+
     $bids = Bids::where('user_id',$request->user_id)->get();
-    return response()->json($bids);
+    return response()->json(['success' => true, 'data' => $bids, 'status' => 200]);
+
   }
 
   public function getBid(Request $request)
   {
+      $validator = \Validator::make(
+      array(
+        'id' => $request->id,
+      ),
+      array(
+        'id' => 'required|exists:bids,id',
+     ));
+
+      if($validator->fails())
+      {
+          return response()->json(['success' => false, 'error' => $validator->messages(), 'error_code' => 400]);
+      }
+
     $bid = Bids::where('id',$request->id)->get();
-    return response()->json($bid);
+    return response()->json(['success' => true, 'data' => $bid, 'status' => 200]);
+
   }
 }

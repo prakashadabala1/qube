@@ -9,6 +9,7 @@ class NotificationController extends Controller
     public function get()
     {
         $notifications = Notifications::OrderBy('id','desc')->get();
-        return response()->json([$notifications,200]);
+        return response()->json(["success" => true,"data" => $notfications,"error_code" => 200]);
+
     }
 }

@@ -24,8 +24,9 @@ class PortfolioController extends Controller
   );
 
   if($validator->fails()){
-    return response()->json($validator->messages());
+      return response()->json(['success' => false, 'error' => $validator->messages(), 'error_code' => 400]);
   }
+
   $file_name = rand(10000,1000000000).'_'.time();
   $path = public_path('images/portfolios/'.$file_name.'.jpg');
   $url = url('images/portfolios/'.$file_name.'.jpg');
@@ -40,19 +41,45 @@ class PortfolioController extends Controller
   $portfolio->name = $request->name;
   $portfolio->image = $url;
   $portfolio->save();
-  return response()->json("portfolio saved");
+  return response()->json(['success' => true, 'data' => "portfolio saved", 'status' => 200]);
+
 }
 
-public function getByUser(Request $request)
-{
+public function getByUser(Request $request){
+    $validator = \Validator::make(
+    array(
+      'user_id' => $request->user_id,
+    ),
+    array(
+      'user_id' => 'required|exists:users,id',
+    )
+  );
+
+  if($validator->fails()){
+      return response()->json(['success' => false, 'error' => $validator->messages(), 'error_code' => 400]);
+  }
+
   $user_id = $request->user_id;
   $portfilios = Portfolio::where('user_id',$user_id)->get();
-  return response()->json($portfilios);
+  return response()->json(['success' => true, 'data' => $portfolios, 'status' => 200]);
 }
 
 public function getById(Request $request)
 {
+    $validator = \Validator::make(
+    array(
+      'id' => $request->id,
+    ),
+    array(
+      'id' => 'required|exists:portfolios,id',
+    )
+  );
+
+  if($validator->fails()){
+      return response()->json(['success' => false, 'error' => $validator->messages(), 'error_code' => 400]);
+  }
+
   $portfolio = Portfolio::where('id',$request->id)->get()->first();
-  return response()->json($portfolio);
+  return response()->json(['success' => true, 'data' => $portfolio, 'status' => 200]);
 }
 }
